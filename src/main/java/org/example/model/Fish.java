@@ -38,10 +38,10 @@ public class Fish implements IEntity {
     }
 
     public String toString(){
-        return this.id + " " + this.name + " " + this.age;
+        return this.id + " fish "  + this.name + " " + this.age;
     }
 
     public boolean isOlder(int age){
-        return this.age >= age;
+        return this.age > age;
     }
 }

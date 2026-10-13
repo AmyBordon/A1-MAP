@@ -17,40 +17,59 @@ public class Repo implements IRepo {
 
     @Override
     public IEntity[] getAll() {
-        return arr;
+
+        //return arr;
+        return java.util.Arrays.copyOf(arr, size);
     }
 
     @Override
-    public void add(IEntity e) throws IndexOutOfBoundsException, Exception{
-        if(Objects.equals(size, capacity)) {
+    public Integer get_size(){
+        return this.size;
+    }
+    @Override
+    public Integer get_next_id(){
+        int next = 0;
+        for(int i=0; i< this.size; i++){
+            if(arr[i].getId()>=next)
+                next = arr[i].getId() + 1;
+        }
+        return next;
+    }
+    @Override
+    public int get_pos_by_id(Integer id){
+        int pos = -1;
+        for(int i=0; i<this.size; i++){
+            if(Objects.equals(arr[i].getId(), id))
+                return i;
+        }
+        return pos;
 
-            IEntity[] new_arr =  new IEntity[capacity*2];
+    }
+    @Override
+    public void add(IEntity e) {
+        if(Objects.equals(size, capacity)) {
+            int new_cap;
+            if (capacity ==0)
+                new_cap = 1;
+            else new_cap = capacity*2;
+            IEntity[] new_arr =  new IEntity[new_cap];
             int i=0;
             for(IEntity entity: this.arr){
                 new_arr[i++] = entity;
             }
-            if (this.capacity !=0)
-                this.capacity *= 2;
-            else this.capacity++;
+            this.capacity = new_cap;
             this.arr = new_arr;
         }
-        try {
-            this.arr[this.size++] = e;
-
-        }catch (IndexOutOfBoundsException ex){
-            ex.printStackTrace();
-            //blocking it without stoping the execution
-        }catch (Exception ex1){ //other exceptions
-            ex1.printStackTrace();
-        }
+        this.arr[this.size++] = e;
     }
 
     @Override
-    public void remove(Integer i) throws IndexOutOfBoundsException { //remove from pos i
-        if (i>=this.size || i<0){
-            throw new IndexOutOfBoundsException();
+    public void remove(Integer i) throws IndexOutOfBoundsException {
+        Integer pos = this.get_pos_by_id(i);
+        if (pos>=this.size || pos<0){
+            throw new IndexOutOfBoundsException("Invalid ID!");
         }
-        for(int curr = i; curr < this.size - 1; curr++){
+        for(int curr = pos; curr < this.size - 1; curr++){
             this.arr[curr] = this.arr[curr+1];
         }
         this.arr[--this.size] = null;
@@ -58,17 +77,19 @@ public class Repo implements IRepo {
 
     @Override
     public void update_name(Integer i, String new_name) throws IndexOutOfBoundsException {
-        if (i>=this.size || i<0){
-            throw new IndexOutOfBoundsException();
+        Integer pos = this.get_pos_by_id(i);
+        if (pos>=this.size || pos<0){
+            throw new IndexOutOfBoundsException("Invalid ID!");
         }
-        this.arr[i].setName(new_name);
+        this.arr[pos].setName(new_name);
     }
 
     @Override
     public void update_age(Integer i, Integer new_age) throws IndexOutOfBoundsException{
-        if (i>=this.size || i<0){
-            throw new IndexOutOfBoundsException();
+        Integer pos = this.get_pos_by_id(i);
+        if (pos>=this.size || pos<0){
+            throw new IndexOutOfBoundsException("Invalid ID!");
         }
-        this.arr[i].setAge(new_age);
+        this.arr[pos].setAge(new_age);
     }
 }
